@@ -4,9 +4,11 @@ import { Menu, X } from "lucide-react";
 
 const nav = [
   { to: "/", label: "Home" },
+  { to: "/about", label: "About" },
   { to: "/treatments", label: "Treatments" },
-  { to: "/blog", label: "Blog" },
   { to: "/gallery", label: "Gallery" },
+  { to: "/blog", label: "Blog" },
+  { to: "/reviews", label: "Reviews" },
   { to: "/contact", label: "Contact" },
 ];
 
@@ -35,9 +37,9 @@ export function Header() {
               {n.label}
             </Link>
           ))}
-          <Link to="/contact" className="px-5 py-2.5 bg-gradient-saffron text-ivory text-sm font-medium rounded-full hover:opacity-90 transition shadow-soft">
+          <a href="https://wa.me/918485019880?text=Hello%20Dr.%20Omprakash%20Tikhe%2C%20I%20would%20like%20to%20book%20an%20appointment%20for%20a%20consultation." target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 bg-gradient-saffron text-ivory text-sm font-medium rounded-full hover:opacity-90 transition shadow-soft">
             Book Consultation
-          </Link>
+          </a>
         </nav>
 
         <button className="lg:hidden p-2 text-charcoal" onClick={() => setOpen(!open)} aria-label="Menu">
@@ -53,9 +55,9 @@ export function Header() {
                 {n.label}
               </Link>
             ))}
-            <Link to="/contact" onClick={() => setOpen(false)} className="mt-2 text-center px-5 py-3 bg-gradient-saffron text-ivory rounded-full">
+            <a href="https://wa.me/918485019880?text=Hello%20Dr.%20Omprakash%20Tikhe%2C%20I%20would%20like%20to%20book%20an%20appointment%20for%20a%20consultation." target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className="mt-2 text-center px-5 py-3 bg-gradient-saffron text-ivory rounded-full block text-sm font-medium">
               Book Consultation
-            </Link>
+            </a>
           </div>
         </div>
       )}

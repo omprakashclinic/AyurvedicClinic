@@ -113,8 +113,14 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+import { seedDatabaseIfEmpty } from "../lib/firebaseSeeding";
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    seedDatabaseIfEmpty();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

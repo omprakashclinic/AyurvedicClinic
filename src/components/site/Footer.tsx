@@ -8,7 +8,7 @@ export function Footer() {
         <div>
           <div className="flex items-center gap-3 mb-5">
             <div className="h-11 w-11 rounded-full bg-gradient-saffron grid place-items-center text-ivory font-display">ॐ</div>
-            <div className="font-serif text-xl">Ayurveda Sanctuary</div>
+            <div className="font-serif text-xl leading-tight">Shree Vishvmaharshi Clinic</div>
           </div>
           <p className="font-devanagari text-sm text-ivory/70 leading-relaxed">
             स्वस्थस्य स्वास्थ्य रक्षणम्<br/>आतुरस्य विकार प्रशमनम्
@@ -23,23 +23,32 @@ export function Footer() {
         </div>
 
         <FooterCol title="Quick Links" items={[
-          { label: "About", to: "/" }, { label: "Treatments", to: "/treatments" },
-          { label: "Blog", to: "/blog" }, { label: "Gallery", to: "/gallery" }, { label: "Contact", to: "/contact" },
+          { label: "About", to: "/about" }, 
+          { label: "Treatments", to: "/treatments" },
+          { label: "Gallery", to: "/gallery" }, 
+          { label: "Blog", to: "/blog" }, 
+          { label: "Reviews", to: "/reviews" },
+          { label: "Contact", to: "/contact" },
         ]} />
         <FooterCol title="Treatments" items={[
-          { label: "Shirodhara", to: "/treatments/shirodhara" }, { label: "Abhyanga", to: "/treatments/abhyanga" },
-          { label: "Panchakarma", to: "/treatments/vamana" }, { label: "Kati Basti", to: "/treatments/kati-basti" }, { label: "Pizhichil", to: "/treatments/pizhichil" },
+          { label: "Vamana", to: "/treatments/vamana" }, 
+          { label: "Virechana", to: "/treatments/virechana" },
+          { label: "Basti", to: "/treatments/basti" }, 
+          { label: "Nasya", to: "/treatments/nasya" }, 
+          { label: "Raktamokshana", to: "/treatments/raktamokshana" },
         ]} />
         <div>
           <h4 className="font-serif text-lg mb-4 text-saffron">Visit Us</h4>
-          <p className="text-sm text-ivory/70 leading-relaxed">
-            Heritage Wellness Lane<br/>Koregaon Park, Pune 411001<br/>Maharashtra, India
+          <p className="text-sm text-ivory/70 leading-relaxed font-devanagari">
+            Chhatrapati Shivaji Maharaj Chowk,<br/>
+            Near Mahendra Market, Opposite Hotel Jagdamb,<br/>
+            Nilgiri Road, Katraj - Ambegaon BK Rd, Pune
           </p>
-          <p className="text-sm text-ivory/70 mt-3">+91 98765 43210<br/>care@ayurvedasanctuary.in</p>
+          <p className="text-sm text-ivory/70 mt-3">+91 84850 19880<br/>care@vishvmaharshiclinic.in</p>
         </div>
       </div>
       <div className="border-t border-ivory/10 py-5 text-center text-xs text-ivory/50 font-devanagari">
-        © 2025 Ayurveda Sanctuary · शरीरं आद्यं खलु धर्मसाधनम्
+        © 2026 Shree Vishvmaharshi Clinic · शरीरं आद्यं खलु धर्मसाधनम्
       </div>
     </footer>
   );
