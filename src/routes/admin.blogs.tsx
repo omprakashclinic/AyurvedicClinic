@@ -94,8 +94,8 @@ function BlogAdmin() {
       {loading ? (
         <div className="py-20 text-center text-charcoal/50">Fetching articles...</div>
       ) : (
-        <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft">
-          <table className="w-full text-sm">
+        <div className="bg-card border border-border rounded-2xl overflow-x-auto shadow-soft">
+          <table className="w-full text-sm min-w-[800px]">
             <thead className="bg-sand/40 text-left">
               <tr>
                 <th className="px-6 py-3.5 font-medium">Title</th>

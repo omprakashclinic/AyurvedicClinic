@@ -185,7 +185,7 @@ function ReviewsPage() {
                   </div>
 
                   <div className="flex gap-0.5 text-[#fbbc05] mb-3">
-                    {Array.from({ length: r.rating }).map((_, starIdx) => (
+                    {Array.from({ length: Math.min(5, Math.max(0, Number(r.rating) || 5)) }).map((_, starIdx) => (
                       <Star key={starIdx} size={14} fill="currentColor" />
                     ))}
                   </div>

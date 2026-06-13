@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { collection, getDocs, doc, setDoc } from "firebase/firestore";
+import { collection, getDocs, doc, setDoc, getDoc } from "firebase/firestore";
 import { treatments, blogPosts, galleryItems } from "./site-data";
 
 // Initial Google reviews from the clinic's listing
@@ -57,11 +57,11 @@ const defaultClinicSettings = {
   qualifications: "BAMS, MD (Ayurveda)",
   experience: "7+ years",
   phone: "084850 19880",
-  address: "chhatrapati Shivaji maharaj chowk, near mahendra market, opposite to hotel jagdamb, Nilgiri Road, Katraj - Ambegaon BK Rd, Pune, Maharashtra 411046",
+  address: "Chhatrapati Shivaji Maharaj Chowk, near Mahendra Market, Opposite to Hotel Jagdamb, Nilgiri Road, Katraj - Ambegaon BK Rd, Pune, Maharashtra 411046, India",
   hours: "Open · Closes 9 PM (Mon-Sun)",
   whatsapp: "918485019880",
   email: "contact@vishvmaharshiclinic.in",
-  googleMapsUrl: "https://maps.google.com/maps?q=Shree%20Vishvmaharshi%20Ayurved%20Speciality%20Panchkarma%20Clinic%20Pune&t=&z=15&ie=UTF8&iwloc=&output=embed"
+  googleMapsUrl: "https://maps.google.com/maps?q=Shree%20Vishvmaharshi%20Ayurved%20Speciality%20Panchkarma%20Clinic,%20chhatrapati%20Shivaji%20maharaj%20chowk,%20near%20mahendra%20market,%20opposite%20to%20hotel%20jagdamb,%20Nilgiri%20Road,%20Katraj%20-%20Ambegaon%20BK%20Rd,%20Pune,%20Maharashtra%20411046,%20India&t=&z=15&ie=UTF8&iwloc=&output=embed"
 };
 
 // Video attachments with real video URLs or YouTube IDs
@@ -201,6 +201,39 @@ const mockAppointments = [
   }
 ];
 
+const mockPosters = [
+  {
+    id: "monsoon_offer",
+    title: "Monsoon Rejuvenation Offer",
+    description: "Rebalance your doshas and revitalize your body with 20% off on detox packages including Abhyanga, Swedana, and Shirodhara.",
+    imageUrl: "monsoon_offer",
+    tag: "Offer",
+    link: "",
+    status: "Active",
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 3
+  },
+  {
+    id: "spine_camp",
+    title: "Free Spinal Alignment Camp",
+    description: "Get your posture assessed and natural spine curvature restored. Book a free checkup slot with Dr. Omprakash Tikhe.",
+    imageUrl: "spine_camp",
+    tag: "Camp",
+    link: "",
+    status: "Active",
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 2
+  },
+  {
+    id: "swarnaprashan",
+    title: "Swarnaprashan Sanskar Event",
+    description: "Boost your child's immunity, memory, and cognitive growth naturally with traditional Ayurvedic gold and honey drops.",
+    imageUrl: "swarnaprashan",
+    tag: "Event",
+    link: "",
+    status: "Active",
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 1
+  }
+];
+
 export async function seedDatabaseIfEmpty() {
   try {
     // 1. Seed Treatments
@@ -269,6 +302,20 @@ export async function seedDatabaseIfEmpty() {
       console.log("Seeding SEO & clinic settings...");
       await setDoc(doc(db, "settings", "seo"), defaultSEO);
       await setDoc(doc(db, "settings", "clinic"), defaultClinicSettings);
+    } else {
+      // Force update map URL and address to the new correct one if it's currently using the old default
+      const clinicDocRef = doc(db, "settings", "clinic");
+      const clinicDocSnap = await getDoc(clinicDocRef);
+      if (clinicDocSnap.exists()) {
+        const data = clinicDocSnap.data();
+        if (!data.googleMapsUrl || data.googleMapsUrl.includes("Clinic%20Pune&t=")) {
+          console.log("Updating clinic address and maps embed URL in Firestore...");
+          await setDoc(clinicDocRef, {
+            address: defaultClinicSettings.address,
+            googleMapsUrl: defaultClinicSettings.googleMapsUrl
+          }, { merge: true });
+        }
+      }
     }
 
     // 7. Seed Patients
@@ -286,6 +333,15 @@ export async function seedDatabaseIfEmpty() {
       console.log("Seeding mock appointments...");
       for (const a of mockAppointments) {
         await setDoc(doc(db, "appointments", a.id), a);
+      }
+    }
+
+    // 9. Seed Posters
+    const postersSnapshot = await getDocs(collection(db, "posters"));
+    if (postersSnapshot.empty) {
+      console.log("Seeding mock posters...");
+      for (const p of mockPosters) {
+        await setDoc(doc(db, "posters", p.id), p);
       }
     }
 

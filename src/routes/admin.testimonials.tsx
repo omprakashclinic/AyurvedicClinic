@@ -93,12 +93,17 @@ function TestimonialsAdmin() {
   };
 
   const handleDelete = async (id?: string) => {
-    if (!id || !confirm("Are you sure you want to delete this review?")) return;
+    if (!id) {
+      alert("Error: Testimonial ID is missing.");
+      return;
+    }
+    if (typeof window !== "undefined" && !window.confirm("Are you sure you want to delete this review?")) return;
     try {
       await removeDocument("testimonials", id);
       fetchTestimonials();
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("Delete review failed:", err);
+      alert("Failed to delete review: " + (err.message || err));
     }
   };
 
@@ -199,8 +204,8 @@ function TestimonialsAdmin() {
       {loading ? (
         <div className="py-20 text-center text-charcoal/50">Fetching reviews...</div>
       ) : (
-        <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft">
-          <table className="w-full text-sm">
+        <div className="bg-card border border-border rounded-2xl overflow-x-auto shadow-soft">
+          <table className="w-full text-sm min-w-[800px]">
             <thead className="bg-sand/40 text-left">
               <tr>
                 <th className="px-6 py-3.5 font-medium">Name</th>
@@ -217,7 +222,7 @@ function TestimonialsAdmin() {
                   <td className="px-6 py-4 text-charcoal/60">{t.location}</td>
                   <td className="px-6 py-4">
                     <div className="flex text-[#fbbc05]">
-                      {Array.from({ length: t.rating }).map((_, i) => (
+                      {Array.from({ length: Math.min(5, Math.max(0, Number(t.rating) || 5)) }).map((_, i) => (
                         <Star key={i} size={13} fill="currentColor" className="stroke-[2.5]" />
                       ))}
                     </div>

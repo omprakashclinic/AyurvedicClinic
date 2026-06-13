@@ -3,8 +3,8 @@ import { MapPin, Phone, MessageCircle, Mail, Clock } from "lucide-react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { SanskritDivider } from "@/components/site/SanskritDivider";
 import { conditions } from "@/lib/site-data";
-import { useState } from "react";
-import { addDocument } from "@/lib/firebase";
+import { useState, useEffect } from "react";
+import { addDocument, getDocumentData } from "@/lib/firebase";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({ meta: [{ title: "Contact — Ayurveda Sanctuary" }, { name: "description", content: "Book your Ayurvedic consultation in Pune." }] }),
@@ -12,6 +12,7 @@ export const Route = createFileRoute("/contact")({
 });
 
 function Contact() {
+  const [clinicSettings, setClinicSettings] = useState<any>(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -21,6 +22,18 @@ function Contact() {
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const data = await getDocumentData("settings", "clinic");
+        if (data) setClinicSettings(data);
+      } catch (err) {
+        console.error("Failed to load clinic settings on contact page:", err);
+      }
+    }
+    loadSettings();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +69,22 @@ function Contact() {
     }
   };
 
+  const clinicAddress = clinicSettings?.address || "Chhatrapati Shivaji Maharaj Chowk, near Mahendra Market, Opposite to Hotel Jagdamb, Nilgiri Road, Katraj - Ambegaon BK Rd, Pune, Maharashtra 411046, India";
+  const clinicPhone = clinicSettings?.phone || "+91 84850 19880";
+  const clinicEmail = clinicSettings?.email || "care@vishvmaharshiclinic.in";
+  const clinicHours = clinicSettings?.hours || "Mon–Sun · 9:00 AM – 9:00 PM";
+  const clinicWhatsapp = clinicSettings?.whatsapp || "918485019880";
+  const mapEmbedUrl = clinicSettings?.googleMapsUrl || "https://maps.google.com/maps?q=Shree%20Vishvmaharshi%20Ayurved%20Speciality%20Panchkarma%20Clinic,%20chhatrapati%20Shivaji%20maharaj%20chowk,%20near%20mahendra%20market,%20opposite%20to%20hotel%20jagdamb,%20Nilgiri%20Road,%20Katraj%20-%20Ambegaon%20BK%20Rd,%20Pune,%20Maharashtra%20411046,%20India&t=&z=15&ie=UTF8&iwloc=&output=embed";
+
+  // Split address into sub-lines for cleaner display in card if too long
+  const addressLines = clinicAddress.includes(", opposite")
+    ? [
+        clinicAddress.split(", opposite")[0] + ",",
+        "Opposite" + clinicAddress.split(", opposite")[1].split(", Nilgiri")[0] + ",",
+        clinicAddress.split(", Nilgiri")[1]?.trim() || ""
+      ].filter(Boolean)
+    : [clinicAddress];
+
   return (
     <SiteShell>
       <section className="pt-32 pb-10 bg-gradient-warm text-center">
@@ -67,10 +96,10 @@ function Contact() {
       <section className="mx-auto max-w-7xl px-6 lg:px-10 py-16 grid lg:grid-cols-[1fr_1.2fr] gap-12">
         <div className="space-y-6">
           {[
-            { Icon: MapPin, title: "Visit", lines: ["Chhatrapati Shivaji Maharaj Chowk, near Mahendra Market,", "Opposite to Hotel Jagdamb, Nilgiri Road,", "Katraj - Ambegaon BK Rd, Pune, Maharashtra 411046"] },
-            { Icon: Phone, title: "Call / WhatsApp", lines: ["+91 84850 19880"] },
-            { Icon: Mail, title: "Email", lines: ["care@vishvmaharshiclinic.in"] },
-            { Icon: Clock, title: "Hours", lines: ["Mon–Sun · 9:00 AM – 9:00 PM"] },
+            { Icon: MapPin, title: "Visit", lines: addressLines },
+            { Icon: Phone, title: "Call / WhatsApp", lines: [clinicPhone] },
+            { Icon: Mail, title: "Email", lines: [clinicEmail] },
+            { Icon: Clock, title: "Hours", lines: [clinicHours] },
           ].map((c) => (
             <div key={c.title} className="flex gap-4 p-6 bg-card rounded-2xl border border-border shadow-soft">
               <div className="h-12 w-12 shrink-0 rounded-xl bg-gradient-saffron grid place-items-center text-ivory"><c.Icon size={20}/></div>
@@ -80,12 +109,12 @@ function Contact() {
               </div>
             </div>
           ))}
-          <a href="https://wa.me/918485019880" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full py-4 bg-forest text-ivory rounded-2xl hover:opacity-90 transition font-bold shadow-soft">
+          <a href={`https://wa.me/${clinicWhatsapp}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full py-4 bg-forest text-ivory rounded-2xl hover:opacity-90 transition font-bold shadow-soft">
             <MessageCircle size={20}/> Chat on WhatsApp
           </a>
           <div className="aspect-video rounded-2xl overflow-hidden border border-border bg-card shadow-soft h-[300px]">
             <iframe 
-              src="https://maps.google.com/maps?q=Shree%20Vishvmaharshi%20Ayurved%20Speciality%20Panchkarma%20Clinic%20Pune&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+              src={mapEmbedUrl} 
               width="100%" 
               height="100%" 
               style={{ border: 0 }} 

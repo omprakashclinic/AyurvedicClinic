@@ -165,7 +165,7 @@ function AppointmentsCMS() {
       {/* Appointments Grid/Table */}
       <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="bg-sand/10 border-b border-border text-xs uppercase tracking-wider text-charcoal/60 font-serif">
                 <th className="p-4">Patient</th>

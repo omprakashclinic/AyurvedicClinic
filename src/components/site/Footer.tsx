@@ -47,8 +47,10 @@ export function Footer() {
           <p className="text-sm text-ivory/70 mt-3">+91 84850 19880<br/>care@vishvmaharshiclinic.in</p>
         </div>
       </div>
-      <div className="border-t border-ivory/10 py-5 text-center text-xs text-ivory/50 font-devanagari">
-        © 2026 Shree Vishvmaharshi Clinic · शरीरं आद्यं खलु धर्मसाधनम्
+      <div className="border-t border-ivory/10 py-5 text-center text-xs text-ivory/50 font-devanagari flex flex-col sm:flex-row justify-center items-center gap-2">
+        <span>© 2026 Shree Vishvmaharshi Clinic · शरीरं आद्यं खलु धर्मसाधनम्</span>
+        <span className="hidden sm:inline">·</span>
+        <Link to="/admin" className="hover:text-saffron transition underline">Admin Login</Link>
       </div>
     </footer>
   );

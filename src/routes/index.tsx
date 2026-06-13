@@ -17,6 +17,9 @@ import herbs from "@/assets/herbs.jpg";
 import clinic from "@/assets/clinic-interior.jpg";
 import mandala from "@/assets/mandala.png";
 import spine from "@/assets/spine.png";
+import monsoonOffer from "@/assets/monsoon_offer.png";
+import spineCamp from "@/assets/spine_camp.png";
+import swarnaprashan from "@/assets/swarnaprashan.png";
 
 // Load static fallbacks in case Firestore is loading or empty
 import * as staticData from "@/lib/site-data";
@@ -44,7 +47,10 @@ const staticImageMap: Record<string, string> = {
   "Kati Basti": shirodhara, "kati-basti": shirodhara,
   "Janu Basti": abhyanga, "janu-basti": abhyanga,
   clinic: clinic,
-  herbs: herbs
+  herbs: herbs,
+  monsoon_offer: monsoonOffer,
+  spine_camp: spineCamp,
+  swarnaprashan: swarnaprashan
 };
 
 function resolveImg(imgKey: string, defaultImg: string = abhyanga) {
@@ -52,6 +58,36 @@ function resolveImg(imgKey: string, defaultImg: string = abhyanga) {
   if (imgKey.startsWith("http")) return imgKey;
   return staticImageMap[imgKey] || defaultImg;
 }
+
+const staticPosters = [
+  {
+    id: "monsoon_offer",
+    title: "Monsoon Rejuvenation Offer",
+    description: "Rebalance your doshas and revitalize your body with 20% off on detox packages including Abhyanga, Swedana, and Shirodhara.",
+    imageUrl: "monsoon_offer",
+    tag: "Offer",
+    link: "",
+    status: "Active"
+  },
+  {
+    id: "spine_camp",
+    title: "Free Spinal Alignment Camp",
+    description: "Get your posture assessed and natural spine curvature restored. Book a free checkup slot with Dr. Omprakash Tikhe.",
+    imageUrl: "spine_camp",
+    tag: "Camp",
+    link: "",
+    status: "Active"
+  },
+  {
+    id: "swarnaprashan",
+    title: "Swarnaprashan Sanskar Event",
+    description: "Boost your child's immunity, memory, and cognitive growth naturally with traditional Ayurvedic gold and honey drops.",
+    imageUrl: "swarnaprashan",
+    tag: "Event",
+    link: "",
+    status: "Active"
+  }
+];
 
 function Home() {
   const [treatments, setTreatments] = useState<any[]>(staticData.treatments);
@@ -61,6 +97,7 @@ function Home() {
   const [videos, setVideos] = useState<any[]>([]);
   const [seo, setSeo] = useState<any>(null);
   const [clinicSettings, setClinicSettings] = useState<any>(null);
+  const [posters, setPosters] = useState<any[]>(staticPosters);
 
   // Popup state
   const [showPopup, setShowPopup] = useState(false);
@@ -90,6 +127,15 @@ function Home() {
 
         const dbClinicSettings = await getDocumentData("settings", "clinic");
         if (dbClinicSettings) setClinicSettings(dbClinicSettings);
+
+        const dbPosters = await getCollectionData("posters");
+        if (dbPosters.length > 0) {
+          const activePosters = dbPosters
+            .filter((p: any) => p.status === "Active")
+            .sort((a: any, b: any) => (b.createdAt || 0) - (a.createdAt || 0))
+            .slice(0, 3);
+          setPosters(activePosters);
+        }
       } catch (err) {
         console.error("Failed to load home page content from Firestore:", err);
       }
@@ -133,6 +179,7 @@ function Home() {
   return (
     <SiteShell>
       <Hero />
+      <Promotions posters={posters} />
       <AboutAyurveda />
       <Doctor settings={clinicSettings} />
       <TreatmentsSection treatments={treatments} />
@@ -143,7 +190,7 @@ function Home() {
       <GalleryStrip gallery={gallery} />
       <TestimonialsSection testimonials={testimonials} />
       <FAQ />
-      <ContactCTA />
+      <ContactCTA settings={clinicSettings} />
 
       {/* Callback Popup Modal */}
       <AnimatePresence>
@@ -301,6 +348,93 @@ function Hero() {
         </motion.div>
       </div>
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-ivory/60 animate-bounce"><ChevronDown/></div>
+    </section>
+  );
+}
+
+interface PromotionsProps {
+  posters: any[];
+}
+
+function Promotions({ posters }: PromotionsProps) {
+  if (!posters || posters.length === 0) return null;
+
+  return (
+    <section className="py-20 bg-ivory relative overflow-hidden border-b border-border/40">
+      <img src={mandala} alt="" aria-hidden className="absolute -right-48 top-1/2 -translate-y-1/2 w-[500px] opacity-[0.03] animate-mandala-spin pointer-events-none"/>
+      <div className="mx-auto max-w-7xl px-6 lg:px-10 relative">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <span className="font-display text-xs tracking-[0.3em] text-copper uppercase">LATEST NEWS & OFFERS</span>
+          <h2 className="font-serif text-3.5xl md:text-5xl mt-3 leading-tight">Announcements & <em className="text-gradient-copper not-italic">Special Events</em></h2>
+          <SanskritDivider text="सूचना आणि घोषणा"/>
+        </div>
+
+        <div className={`grid gap-8 justify-center ${
+          posters.length === 1 
+            ? "max-w-xl mx-auto grid-cols-1" 
+            : posters.length === 2 
+            ? "max-w-4xl mx-auto md:grid-cols-2" 
+            : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+        }`}>
+          {posters.map((p, i) => {
+            const waText = encodeURIComponent(`Hello Dr. Omprakash Tikhe, I am interested in the "${p.title}" ${p.tag || "announcement"} I saw on your website. Please share more details.`);
+            const waLink = `https://wa.me/918485019880?text=${waText}`;
+            const actionLink = p.link || waLink;
+            
+            return (
+              <motion.article 
+                key={p.id || i} 
+                initial={{ opacity: 0, y: 30 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: true }} 
+                transition={{ delay: i * 0.1 }}
+                className="group relative bg-card border border-border rounded-[2rem] overflow-hidden hover:shadow-luxe hover:border-saffron/40 transition-all duration-500 flex flex-col justify-between"
+              >
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-sand/10 border-b border-border/60">
+                  <img 
+                    src={resolveImg(p.imageUrl, herbs)} 
+                    alt={p.title} 
+                    loading="lazy" 
+                    width={800} 
+                    height={1000} 
+                    className="h-full w-full object-contain bg-sand/15 transition-transform duration-700 group-hover:scale-[1.02]"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <span className="text-[10px] tracking-widest uppercase font-bold px-3 py-1 bg-saffron text-ivory rounded-full shadow-soft">
+                      {p.tag || "Announcement"}
+                    </span>
+                  </div>
+                  {/* Subtle hover overlay */}
+                  <div className="absolute inset-0 bg-charcoal/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                </div>
+                
+                <div className="p-6 flex-1 flex flex-col justify-between">
+                  <div className="space-y-2 mb-5">
+                    <h3 className="font-serif text-xl font-bold text-charcoal line-clamp-2 leading-snug group-hover:text-saffron transition-colors duration-300">
+                      {p.title}
+                    </h3>
+                    {p.description && (
+                      <p className="text-xs text-charcoal/70 leading-relaxed line-clamp-3">
+                        {p.description}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <a 
+                    href={actionLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-full inline-flex items-center justify-center gap-1.5 py-3 bg-card border border-border text-charcoal group-hover:bg-saffron group-hover:text-ivory group-hover:border-saffron rounded-full text-xs font-bold shadow-soft transition-all duration-300"
+                  >
+                    <span>Enquire Now</span>
+                    <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-1" />
+                  </a>
+                </div>
+              </motion.article>
+            );
+          })}
+        </div>
+      </div>
     </section>
   );
 }
@@ -805,8 +939,7 @@ function FAQ() {
     </section>
   );
 }
-
-function ContactCTA() {
+function ContactCTA({ settings }: { settings: any }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -853,23 +986,23 @@ function ContactCTA() {
         <div>
           <span className="font-display text-xs tracking-[0.3em] text-copper">BEGIN YOUR JOURNEY</span>
           <h2 className="font-serif text-4xl md:text-5xl mt-3 leading-tight">Book your <em className="text-gradient-copper not-italic font-serif">consultation</em></h2>
-          <p className="mt-5 text-charcoal/75 leading-relaxed max-w-md">Contact our team to secure an in-clinic slot or video session with Dr. Omprakash Tikhe.</p>
+          <p className="mt-5 text-charcoal/75 leading-relaxed max-w-md">Contact our team to secure an in-clinic slot or video session with {settings?.doctor || "Dr. Omprakash Tikhe"}.</p>
           <div className="mt-8 space-y-4 text-charcoal/80">
             <div className="flex items-start gap-3">
               <MapPin className="text-saffron shrink-0" />
-              <div className="text-sm">Chhatrapati Shivaji Maharaj Chowk, near Mahendra Market,<br />Opposite Hotel Jagdamb, Nilgiri Road, Katraj - Ambegaon BK Rd, Pune</div>
+              <div className="text-sm">{settings?.address || "Chhatrapati Shivaji Maharaj Chowk, near Mahendra Market, Opposite Hotel Jagdamb, Nilgiri Road, Katraj - Ambegaon BK Rd, Pune"}</div>
             </div>
             <div className="flex items-center gap-3">
               <Phone className="text-saffron shrink-0" />
-              <a href="tel:+918485019880" className="text-sm font-bold hover:underline">+91 84850 19880</a>
+              <a href={`tel:${settings?.phone || "+918485019880"}`} className="text-sm font-bold hover:underline">{settings?.phone || "+91 84850 19880"}</a>
             </div>
-            <a href="https://wa.me/918485019880" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-4 px-6 py-3 bg-forest text-ivory rounded-full hover:opacity-90 transition font-bold shadow-soft">
+            <a href={`https://wa.me/${settings?.whatsapp || "918485019880"}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-4 px-6 py-3 bg-forest text-ivory rounded-full hover:opacity-90 transition font-bold shadow-soft">
               <MessageCircle size={18}/> Chat on WhatsApp
             </a>
           </div>
           <div className="mt-8 aspect-video rounded-2xl overflow-hidden border border-border bg-card shadow-soft h-[260px]">
             <iframe 
-              src="https://maps.google.com/maps?q=Shree%20Vishvmaharshi%20Ayurved%20Speciality%20Panchkarma%20Clinic%20Pune&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+              src={settings?.googleMapsUrl || "https://maps.google.com/maps?q=Shree%20Vishvmaharshi%20Ayurved%20Speciality%20Panchkarma%20Clinic,%20chhatrapati%20Shivaji%20maharaj%20chowk,%20near%20mahendra%20market,%20opposite%20to%20hotel%20jagdamb,%20Nilgiri%20Road,%20Katraj%20-%20Ambegaon%20BK%20Rd,%20Pune,%20Maharashtra%20411046,%20India&t=&z=15&ie=UTF8&iwloc=&output=embed"} 
               width="100%" 
               height="100%" 
               style={{ border: 0 }} 

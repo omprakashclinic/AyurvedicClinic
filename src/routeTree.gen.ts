@@ -27,6 +27,7 @@ import { Route as AdminTreatmentsRouteImport } from './routes/admin.treatments'
 import { Route as AdminTestimonialsRouteImport } from './routes/admin.testimonials'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminSeoRouteImport } from './routes/admin.seo'
+import { Route as AdminPostersRouteImport } from './routes/admin.posters'
 import { Route as AdminPatientsRouteImport } from './routes/admin.patients'
 import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
 import { Route as AdminBlogsRouteImport } from './routes/admin.blogs'
@@ -122,6 +123,11 @@ const AdminSeoRoute = AdminSeoRouteImport.update({
   path: '/seo',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPostersRoute = AdminPostersRouteImport.update({
+  id: '/posters',
+  path: '/posters',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPatientsRoute = AdminPatientsRouteImport.update({
   id: '/patients',
   path: '/patients',
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/admin/blogs': typeof AdminBlogsRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/patients': typeof AdminPatientsRoute
+  '/admin/posters': typeof AdminPostersRoute
   '/admin/seo': typeof AdminSeoRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/admin/blogs': typeof AdminBlogsRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/patients': typeof AdminPatientsRoute
+  '/admin/posters': typeof AdminPostersRoute
   '/admin/seo': typeof AdminSeoRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
@@ -202,6 +210,7 @@ export interface FileRoutesById {
   '/admin/blogs': typeof AdminBlogsRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/patients': typeof AdminPatientsRoute
+  '/admin/posters': typeof AdminPostersRoute
   '/admin/seo': typeof AdminSeoRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
@@ -228,6 +237,7 @@ export interface FileRouteTypes {
     | '/admin/blogs'
     | '/admin/gallery'
     | '/admin/patients'
+    | '/admin/posters'
     | '/admin/seo'
     | '/admin/settings'
     | '/admin/testimonials'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/admin/blogs'
     | '/admin/gallery'
     | '/admin/patients'
+    | '/admin/posters'
     | '/admin/seo'
     | '/admin/settings'
     | '/admin/testimonials'
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | '/admin/blogs'
     | '/admin/gallery'
     | '/admin/patients'
+    | '/admin/posters'
     | '/admin/seo'
     | '/admin/settings'
     | '/admin/testimonials'
@@ -424,6 +436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSeoRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/posters': {
+      id: '/admin/posters'
+      path: '/posters'
+      fullPath: '/admin/posters'
+      preLoaderRoute: typeof AdminPostersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/patients': {
       id: '/admin/patients'
       path: '/patients'
@@ -460,6 +479,7 @@ interface AdminRouteChildren {
   AdminBlogsRoute: typeof AdminBlogsRoute
   AdminGalleryRoute: typeof AdminGalleryRoute
   AdminPatientsRoute: typeof AdminPatientsRoute
+  AdminPostersRoute: typeof AdminPostersRoute
   AdminSeoRoute: typeof AdminSeoRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTestimonialsRoute: typeof AdminTestimonialsRoute
@@ -473,6 +493,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBlogsRoute: AdminBlogsRoute,
   AdminGalleryRoute: AdminGalleryRoute,
   AdminPatientsRoute: AdminPatientsRoute,
+  AdminPostersRoute: AdminPostersRoute,
   AdminSeoRoute: AdminSeoRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminTestimonialsRoute: AdminTestimonialsRoute,

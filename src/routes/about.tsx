@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { SanskritDivider } from "@/components/site/SanskritDivider";
 import { Leaf, Award, Compass, Heart, Activity, Check } from "lucide-react";
+import { getDocumentData } from "@/lib/firebase";
 import doctorImg from "@/assets/doctor.jpg";
 import clinicImg from "@/assets/clinic-interior.jpg";
 import mandala from "@/assets/mandala.png";
@@ -18,10 +20,31 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const [settings, setSettings] = useState<any>(null);
+
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const data = await getDocumentData("settings", "clinic");
+        if (data) setSettings(data);
+      } catch (err) {
+        console.error("Failed to load clinic settings on about page:", err);
+      }
+    }
+    loadSettings();
+  }, []);
+
+  const doctorName = settings?.doctor || "Dr. Omprakash Tikhe";
+  const qualifications = settings?.qualifications || "BAMS, MD (Ayurveda Speciality)";
+  const experienceYears = settings?.experienceYears || "7+";
+  const experienceText = settings?.experience || "7+ Years of Clinical Practice";
+  const specialisation = settings?.specialisation || "Panchakarma & Spine Alignment";
+  const doctorImgSrc = settings?.doctorImage || doctorImg;
+
   const credentials = [
-    { title: "Education", value: "BAMS, MD (Ayurveda Speciality)", icon: Award },
-    { title: "Experience", value: "7+ Years of Clinical Practice", icon: Activity },
-    { title: "Specialisation", value: "Panchakarma & Spine Alignment", icon: Compass },
+    { title: "Education", value: qualifications, icon: Award },
+    { title: "Experience", value: experienceText, icon: Activity },
+    { title: "Specialisation", value: specialisation, icon: Compass },
     { title: "Approach", value: "Holistic & Patient-Centric Healing", icon: Heart },
   ];
 
@@ -53,10 +76,10 @@ function AboutPage() {
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="relative">
             <div className="absolute -inset-6 bg-gradient-saffron rounded-[2rem] opacity-20 blur-2xl"/>
             <div className="relative rounded-[2rem] overflow-hidden shadow-luxe border border-border bg-card">
-              <img src={doctorImg} alt="Dr. Omprakash Tikhe" className="w-full h-[600px] object-cover" />
+              <img src={doctorImgSrc} alt={doctorName} className="w-full h-[600px] object-cover" />
             </div>
             <div className="absolute -bottom-6 -right-6 bg-card border border-border rounded-2xl px-6 py-5 shadow-luxe">
-              <div className="font-serif text-3xl text-saffron font-bold">7+</div>
+              <div className="font-serif text-3xl text-saffron font-bold">{experienceYears}</div>
               <div className="text-[10px] uppercase tracking-widest text-charcoal/65">Years of Healing</div>
             </div>
           </motion.div>
@@ -64,13 +87,13 @@ function AboutPage() {
           <div className="space-y-6">
             <div>
               <span className="font-display text-xs tracking-[0.3em] text-copper">THE PHYSICIAN</span>
-              <h2 className="font-serif text-4xl md:text-5xl mt-2 text-charcoal font-bold">Dr. Omprakash Tikhe <span className="text-2xl block lg:inline text-saffron font-sans font-medium">(BAMS, MD)</span></h2>
+              <h2 className="font-serif text-4xl md:text-5xl mt-2 text-charcoal font-bold">{doctorName} <span className="text-2xl block lg:inline text-saffron font-sans font-medium">({qualifications})</span></h2>
               <p className="font-devanagari text-copper mt-1">तज्ज्ञ आयुर्वेदिक चिकित्सक आणि पंचकर्म तज्ज्ञ</p>
               <div className="h-0.5 w-16 bg-saffron mt-4" />
             </div>
 
             <p className="text-charcoal/75 leading-relaxed text-base md:text-lg">
-              Dr. Omprakash Tikhe is one of the most reputed and respected Ayurvedic doctors in Pune, Maharashtra. Over the past 7 years, he has successfully treated thousands of patients suffering from acute and chronic diseases, combining ancient knowledge with modern clinical safety standards.
+              {doctorName} is one of the most reputed and respected Ayurvedic doctors in Pune, Maharashtra. Over the past {experienceYears.replace('+', '')} years, he has successfully treated thousands of patients suffering from acute and chronic diseases, combining ancient knowledge with modern clinical safety standards.
             </p>
             <p className="text-charcoal/75 leading-relaxed text-base">
               His clinic, <strong>Shree Vishvmaharshi Ayurved Speciality Panchkarma Clinic</strong>, offers a peaceful environment designed for deep recovery. Dr. Tikhe specializes not only in the traditional five cleansing actions (Panchakarma) but also in advanced physical therapies such as Spine Alignment, Dorn Therapy, and Structural Integration, providing immediate relief for structural issues and joint pain.
